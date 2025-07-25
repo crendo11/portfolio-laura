@@ -64,7 +64,7 @@ export default async function HomePage() {
                         <img
                           src={project.mainImage.asset.url}
                           alt={project.title}
-                          className="rounded w-full max-w-xs h-auto object-cover"
+                          className="rounded w-full max-w-xs h-auto object-cover max-h-[110vh]"
                           style={{ maxWidth: '90vw' }}
                         />
                         <div
