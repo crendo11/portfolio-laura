@@ -10,9 +10,14 @@ type Project = {
     process?: any
 }
 
-export default async function ProjectPage(props: { params: { slug: string } }) {
+interface PageProps {
+  params: Promise<{ slug: string }>
+}
+
+
+export default async function ProjectPage( { params }: PageProps ) {
     // Destructure params from props (no need to await props in the latest Next.js, just use props.params)
-    const { params } = props
+    const { slug } = await params
 
     // Fetch the project from Sanity using the slug
     const project: Project = await sanityClient.fetch(
@@ -24,7 +29,7 @@ export default async function ProjectPage(props: { params: { slug: string } }) {
         description,
         process
       }`,
-        { slug: params.slug }
+        { slug }
     )
 
     if (!project) return <div>Project not found</div>
