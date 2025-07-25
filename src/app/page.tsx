@@ -11,7 +11,7 @@ type Project = {
 
 export default async function HomePage() {
   const projects: Project[] = await sanityClient.fetch(
-    `*[_type == "project"]{
+    `*[_type == "project"] | order(order asc){
       _id,
       title,
       slug,
