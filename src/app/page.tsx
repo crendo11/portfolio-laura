@@ -1,3 +1,5 @@
+export const revalidate = 10
+
 import Link from 'next/link'
 import { sanityClient } from '@/lib/sanity'
 
