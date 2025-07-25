@@ -1,103 +1,83 @@
-import Image from "next/image";
+import Link from 'next/link'
+import { sanityClient } from '@/lib/sanity'
 
-export default function Home() {
+type Project = {
+  _id: string
+  title: string
+  slug: { current: string }
+  bgColor?: { hex: string }
+  mainImage?: { asset: { url: string } }
+}
+
+export default async function HomePage() {
+  const projects: Project[] = await sanityClient.fetch(
+    `*[_type == "project"]{
+      _id,
+      title,
+      slug,
+      bgColor,
+      mainImage{
+        asset->{
+          url
+        }
+      }
+    }`
+  )
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <main className="min-h-screen bg-white">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
+        {projects.map((project, idx) => {
+          const color = project.bgColor?.hex || '#f0f0f0'
+          const gradient =
+            idx % 2 === 0
+              ? `linear-gradient(to bottom, ${color} 0%, #fff 100%)`
+              : `linear-gradient(to bottom, #fff 0%, ${color} 100%)`
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+
+          return (
+            <article
+              key={project._id}
+              style={{ background: gradient }}
+              className="rounded-xl transition-shadow duration-300 shadow-lg hover:shadow-2xl"
+            >
+              <Link
+                href={`/project/${project.slug.current}`}
+                className="group block rounded-xl overflow-hidden"
+                style={{ margin: '200px 0' }}
+              >
+                {project.mainImage?.asset?.url && (
+                  <div
+                    className={
+                      idx % 2 === 0
+                        ? "flex justify-center"
+                        : idx % 4 === 1
+                          ? "flex justify-start"
+                          : "flex justify-end"
+                    }
+                  >
+                    <div 
+                      className="relative"
+                      style={{ margin: '30px 0' }}
+                      >
+                      <img
+                        src={project.mainImage.asset.url}
+                        alt={project.title}
+                        className="rounded max-w-xs h-auto"
+                      />
+                      <div style={{ pointerEvents: 'none', position: 'absolute', bottom: '-1.5rem', color: 'black'}}
+                      >
+                        <span className="mt-2 text-xs text-gray-500">{project.title}</span>
+                      </div>
+                    </div>
+
+                  </div>
+                )}
+              </Link>
+            </article>
+          )
+        })}
+      </div>
+    </main>
+  )
 }
