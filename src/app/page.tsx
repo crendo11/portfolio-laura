@@ -1,5 +1,3 @@
-export const revalidate = 10
-
 import Link from 'next/link'
 import { sanityClient } from '@/lib/sanity'
 
@@ -23,7 +21,9 @@ export default async function HomePage() {
           url
         }
       }
-    }`
+    }`,
+    {},
+    { next: { tags: ['projects'] } }
   )
 
   return (
