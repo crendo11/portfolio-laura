@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { sanityClient } from '@/lib/sanity'
+import Header from '@/components/Header'
 
 type Project = {
   _id: string
@@ -28,10 +29,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <header className="fixed w-full flex justify-between items-center px-4 py-3 bg-transparent">
-        <span className="text-lg font-bold">Leidy Laura Rendon</span>
-        <span className="text-base">about</span>
-      </header>
+      <Header />
       <main className="min-h-screen bg-white px-2 sm:px-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10 max-w-6xl mx-auto py-8">
           {projects.map((project, idx) => {
@@ -54,8 +52,8 @@ export default async function HomePage() {
                 style={{ background: gradient }}
                 className="rounded-xl transition-shadow duration-300 shadow-lg hover:shadow-2xl"
               >
-                <Link
-                  href={`/project/${project.slug.current}`}
+                <div
+                  
                   className="group block rounded-xl overflow-hidden"
                   style={{ margin: idx == 0 ? '100px 0' : '200px 0' }}
                 >
@@ -69,14 +67,15 @@ export default async function HomePage() {
                             : "flex justify-end"
                       }
                     >
-                      <div
+                      <Link
+                        href={`/project/${project.slug.current}`}
                         className="relative"
                         style={{ margin: '20px 0' }}
                       >
                         <img
                           src={project.mainImage.asset.url}
                           alt={project.title}
-                          className="rounded w-full max-w-xs h-auto object-cover max-h-[130vh]"
+                          className="rounded w-full max-w-xs h-auto object-cover max-h-[110vh]"
                           style={{  height: idx == 0 ? '80vh' : 'auto' }}
                         />
                         <div
@@ -91,10 +90,10 @@ export default async function HomePage() {
                         >
                           <span className="mt-2 text-xs text-gray-500">{project.title}</span>
                         </div>
-                      </div>
+                      </Link>
                     </div>
                   )}
-                </Link>
+                </div>
               </article>
             )
           })}
