@@ -35,13 +35,13 @@ export default async function ProjectPage( { params }: PageProps ) {
     if (!project) return <div>Project not found</div>
 
     return (
-        <main className="max-w-3xl mx-auto py-12 px-4">
+        <main className="max-w-5xl mx-auto py-12 px-4">
             <h1 className="text-3xl font-bold mb-6">{project.title}</h1>
             {project.mainImage?.asset?.url && (
                 <img
                     src={project.mainImage.asset.url}
                     alt={project.title}
-                    className="w-full h-96 object-cover rounded mb-6"
+                    className="w-full h-auto object-cover rounded mb-6"
                 />
             )}
             {project.description && (
@@ -63,7 +63,8 @@ export default async function ProjectPage( { params }: PageProps ) {
                                 key={idx}
                                 src={img.asset.url}
                                 alt={`Gallery image ${idx + 1}`}
-                                className="w-full h-48 object-cover rounded"
+                                className="w-full h-auto object-cover rounded"
+                                loading='lazy'
                             />
                         ) : null
                     )}
