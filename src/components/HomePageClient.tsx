@@ -33,7 +33,7 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
                             className="bg-transparent"
                         >
                             <div
-                                className="group block rounded-xl overflow-hidden"
+                                className="group block overflow-hidden"
                                 style={{ margin: idx == 0 ? '100px 0' : '100px 0' }}
                             >
                                 {project.mainImage?.asset?.url && (
@@ -52,7 +52,7 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
                                             <img
                                                 src={project.mainImage.asset.url}
                                                 alt={project.title}
-                                                className={`rounded object-cover ${idx == 0 ? 'max-h-[80vh]' : 'max-h-[55vh] sm:max-h-[110vh]'}`}
+                                                className={`rounded-xl object-cover ${idx == 0 ? 'max-h-[80vh]' : 'max-h-[55vh] sm:max-h-[110vh]'} max-w-[75vw]`}
                                                 loading='lazy'
                                             />
                                             <div className="py-2 text-xs text-gray-800">{project.title}</div>
