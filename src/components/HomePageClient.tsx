@@ -25,7 +25,7 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
       <DynamicBackground projects={projects} activeIndex={activeIndex} />
       <Header />
       <main className="relative z-10 min-h-screen bg-transparent px-2 sm:px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10 max-w-6xl mx-auto py-8">
+        <div className="grid grid-cols-1">
           {projects.map((project, idx) => (
             <article
               key={project._id}
@@ -34,7 +34,7 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
             >
               <div
                 className="group block rounded-xl overflow-hidden"
-                style={{ margin: idx == 0 ? '100px 0' : '200px 0' }}
+                style={{ margin: idx == 0 ? '100px 0' : '100px 0' }}
               >
                 {project.mainImage?.asset?.url && (
                   <div
@@ -54,8 +54,8 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
                       <img
                         src={project.mainImage.asset.url}
                         alt={project.title}
-                        className="rounded w-full max-w-xs h-auto object-cover max-h-[110vh]"
-                        style={{ height: idx == 0 ? '80vh' : 'auto' }}
+                        className="rounded object-cover max-h-[55vh] sm:max-h-[110vh]"
+                        style={{ maxHeight: idx == 0 ? '80vh' : '' }}
                         loading='lazy'
                       />
                       <div
