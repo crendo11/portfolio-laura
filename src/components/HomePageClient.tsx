@@ -56,6 +56,7 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
                         alt={project.title}
                         className="rounded w-full max-w-xs h-auto object-cover max-h-[110vh]"
                         style={{ height: idx == 0 ? '80vh' : 'auto' }}
+                        loading='lazy'
                       />
                       <div
                         style={{
