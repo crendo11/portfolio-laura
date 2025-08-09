@@ -34,7 +34,7 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
                         >
                             <div
                                 className="group block overflow-hidden"
-                                style={{ margin: idx == 0 ? '100px 0' : '100px 0' }}
+                                style={{ margin: idx == 0 ? '100px 0' : '150px 0' }}
                             >
                                 {project.mainImage?.asset?.url && (
                                     <div
@@ -54,6 +54,7 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
                                                 alt={project.title}
                                                 className={`rounded-xl object-cover ${idx == 0 ? 'max-h-[80vh]' : 'max-h-[55vh] sm:max-h-[110vh]'} max-w-[75vw]`}
                                                 loading='lazy'
+                                                decoding='async'
                                             />
                                             <div className="py-2 text-xs text-gray-800">{project.title}</div>
                                         </Link>
