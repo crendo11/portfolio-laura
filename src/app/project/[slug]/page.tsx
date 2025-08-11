@@ -14,68 +14,114 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
+// Utility to build embed iframe src
+function buildEmbedSrc(raw?: string): { type: 'youtube' | 'vimeo' | 'file' | 'none'; src?: string } {
+  if (!raw) return { type: 'none' }
+  const url = raw.trim()
+  // YouTube
+  const ytMatch =
+    url.match(/(?:youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtu\.be\/)([\w-]{11})/)
+  if (ytMatch) {
+    return {
+      type: 'youtube',
+      src: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?rel=0&modestbranding=1`
+    }
+  }
+  // Vimeo
+  const vmMatch = url.match(/vimeo\.com\/(\d+)/)
+  if (vmMatch) {
+    return {
+      type: 'vimeo',
+      src: `https://player.vimeo.com/video/${vmMatch[1]}?title=0&byline=0&portrait=0`
+    }
+  }
+  // Simple heuristic for direct file
+  if (/\.(mp4|webm|ogg)(\?|$)/i.test(url)) return { type: 'file', src: url }
+  return { type: 'none' }
+}
 
-export default async function ProjectPage( { params }: PageProps ) {
-    // Destructure params from props (no need to await props in the latest Next.js, just use props.params)
-    const { slug } = await params
+export default async function ProjectPage({ params }: PageProps) {
+  const { slug } = await params
+  const project: Project = await sanityClient.fetch(
+    `*[_type == "project" && slug.current == $slug][0]{
+      title,
+      mainImage{ asset->{ url } },
+      gallery[]{ asset->{ url } },
+      video,
+      description,
+      process
+    }`,
+    { slug }
+  )
 
-    // Fetch the project from Sanity using the slug
-    const project: Project = await sanityClient.fetch(
-        `*[_type == "project" && slug.current == $slug][0]{
-        title,
-        mainImage{ asset->{ url } },
-        gallery[]{ asset->{ url } },
-        video,
-        description,
-        process
-      }`,
-        { slug }
-    )
+  const videoInfo = buildEmbedSrc(project.video)
 
-    if (!project) return <div>Project not found</div>
+  return (
+    <main className="mx-auto w-full max-w-5xl lg:py-12 lg:px-6 py-4 px-0">
+      {project.mainImage?.asset?.url && (
+        <img
+          src={project.mainImage.asset.url}
+            alt={project.title}
+            className="w-full h-auto object-cover rounded mb-6"
+            loading="lazy"
+        />
+      )}
 
-    return (
-        <main className="max-w-5xl mx-auto py-12 px-4">
-            <h1 className="text-3xl font-bold mb-6">{project.title}</h1>
-            {project.mainImage?.asset?.url && (
-                <img
-                    src={project.mainImage.asset.url}
-                    alt={project.title}
-                    className="w-full h-auto object-cover rounded mb-6"
-                />
-            )}
-            {project.description && (
-                <p className="mb-6 text-lg text-gray-700">{project.description}</p>
-            )}
-            {project.video && (
-                <div className="mb-6">
-                    <video controls className="w-full rounded">
-                        <source src={project.video} />
-                        Your browser does not support the video tag.
-                    </video>
-                </div>
-            )}
-            {project.gallery && project.gallery.length > 0 && (
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                    {project.gallery.map((img, idx) =>
-                        img.asset?.url ? (
-                            <img
-                                key={idx}
-                                src={img.asset.url}
-                                alt={`Gallery image ${idx + 1}`}
-                                className="w-full h-auto object-cover rounded"
-                                loading='lazy'
-                            />
-                        ) : null
-                    )}
-                </div>
-            )}
-            {project.process && (
-                <div className="prose">
-                    <h2>Design Process</h2>
-                    <PortableText value={project.process} />
-                </div>
-            )}
-        </main>
-    )
+      <h1 className="text-2xl font-semibold mb-4 px-4 lg:px-0">{project.title}</h1>
+
+      {project.description && (
+        <p className="mb-6 text-lg text-gray-700 px-4 lg:px-0">{project.description}</p>
+      )}
+
+      {videoInfo.type !== 'none' && (
+        <div className="mb-8 px-0 lg:px-0">
+          {videoInfo.type === 'file' && videoInfo.src && (
+            <video
+              controls
+              playsInline
+              preload="metadata"
+              className="w-full rounded aspect-video bg-black"
+            >
+              <source src={videoInfo.src} />
+              Your browser does not support the video tag.
+            </video>
+          )}
+          {videoInfo.type !== 'file' && videoInfo.src && (
+            <div className="relative w-full aspect-video rounded overflow-hidden bg-black">
+              <iframe
+                src={videoInfo.src}
+                loading="lazy"
+                className="absolute inset-0 h-full w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                title="Project video"
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {project.gallery && project.gallery.length > 0 && (
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-10 px-0 lg:px-0">
+          {project.gallery.map((img, idx) =>
+            img.asset?.url ? (
+              <img
+                key={idx}
+                src={img.asset.url}
+                alt={`Gallery image ${idx + 1}`}
+                className="w-full h-auto object-cover rounded"
+                loading="lazy"
+              />
+            ) : null
+          )}
+        </div>
+      )}
+
+      {project.process && (
+        <section className="prose prose-neutral max-w-none px-4 lg:px-0 pb-16">
+          <PortableText value={project.process} />
+        </section>
+      )}
+    </main>
+  )
 }

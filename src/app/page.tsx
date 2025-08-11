@@ -15,7 +15,9 @@ export default async function HomePage() {
   const projects: Project[] = await sanityClient.fetch(
     `*[_type == "project"] | order(order asc){
       _id, title, slug, bgColor, mainImage{asset->{url}}
-    }`
+    }`,
+    {},
+    {next: { tags: ['projects'] }}
   )
 
   // Pass the server-fetched data to the client component for rendering
