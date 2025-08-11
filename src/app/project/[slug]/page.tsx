@@ -18,15 +18,31 @@ interface PageProps {
 function buildEmbedSrc(raw?: string): { type: 'youtube' | 'vimeo' | 'file' | 'none'; src?: string } {
   if (!raw) return { type: 'none' }
   const url = raw.trim()
-  // YouTube
-  const ytMatch =
-    url.match(/(?:youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtu\.be\/)([\w-]{11})/)
+
+  // Ignore YouTube Clip URLs (cannot be directly embedded without resolving underlying video)
+  if (/youtube\.com\/clip\//.test(url)) {
+    return { type: 'none' } // deliberate: do not render anything, no fallback
+  }
+
+  // YouTube (watch, embed, live, short youtu.be)
+  const ytMatch = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|live\/)|youtu\.be\/)([\w-]{11})/
+  )
   if (ytMatch) {
+    const id = ytMatch[1]
+
+    // Optional: preserve start time (?t= or &t= or ?start=)
+    let start = 0
+    const tParam = url.match(/[?&#](?:t|start)=(\d+)/)
+    if (tParam) start = parseInt(tParam[1], 10)
+    const startQuery = start > 0 ? `&start=${start}` : ''
+
     return {
       type: 'youtube',
-      src: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?rel=0&modestbranding=1`
+      src: `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1${startQuery}`
     }
   }
+
   // Vimeo
   const vmMatch = url.match(/vimeo\.com\/(\d+)/)
   if (vmMatch) {
@@ -35,8 +51,10 @@ function buildEmbedSrc(raw?: string): { type: 'youtube' | 'vimeo' | 'file' | 'no
       src: `https://player.vimeo.com/video/${vmMatch[1]}?title=0&byline=0&portrait=0`
     }
   }
-  // Simple heuristic for direct file
+
+  // Direct file
   if (/\.(mp4|webm|ogg)(\?|$)/i.test(url)) return { type: 'file', src: url }
+
   return { type: 'none' }
 }
 
