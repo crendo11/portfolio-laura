@@ -6,7 +6,7 @@ type Project = {
     mainImage?: { asset: { url: string } }
     gallery?: { asset: { url: string } }[]
     video?: string
-    description?: string
+    description?: any
     process?: any
 }
 
@@ -88,9 +88,10 @@ export default async function ProjectPage({ params }: PageProps) {
       <h1 className="text-2xl font-semibold mb-4 px-4 lg:px-0">{project.title}</h1>
 
       {project.description && (
-        <p className="mb-6 text-lg text-gray-700 px-4 lg:px-0">{project.description}</p>
+        <section className="prose max-w-none px-4 lg:px-0 mb-8">
+          <PortableText value={project.description} />
+        </section>
       )}
-
       {videoInfo.type !== 'none' && (
         <div className="mb-8 px-0 lg:px-0">
           {videoInfo.type === 'file' && videoInfo.src && (
