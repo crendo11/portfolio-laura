@@ -56,7 +56,7 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
                                                 loading='lazy'
                                                 decoding='async'
                                             />
-                                            <div className="py-2 text-xs text-gray-800">{project.title}</div>
+                                            <div className="py-2 text-xs sm:text-base text-gray-800">{project.title}</div>
                                         </Link>
                                     </div>
                                 )}
