@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import { sanityClient } from "@/lib/sanity";
+import { PortableText } from '@portabletext/react'
+
 
 type About = {
   name: string;
-  description: string;
+  description: any;
   email: string;
   profilePic: {
     asset: { url: string };
@@ -48,7 +50,7 @@ const InfoModal = ({ onClose }: ModalProps) => {
         onClick={onClose}
       ></div>
       {/* Modal content */}
-      <div className="bg-white relative p-6 rounded shadow-lg max-w-md mx-auto z-10">
+      <div className="bg-white relative p-6 rounded shadow-lg max-w-md sm:max-w-[70vw] max-h-[80vh] overflow-y-auto mx-auto z-10">
         <button
           className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
           onClick={onClose}
@@ -59,11 +61,11 @@ const InfoModal = ({ onClose }: ModalProps) => {
           <img
             src={sisterInfo.profilePic.asset.url}
             alt={sisterInfo.name}
-            className="w-24 h-24 rounded-full mb-4"
+            className="mb-4 max-h-[50vh]"
           />
           <h2 className="text-xl font-bold mb-2">{sisterInfo.name}</h2>
-          <p className="mb-2 text-gray-700 text-center">
-            {sisterInfo.description}
+          <p className="mb-4">
+            <PortableText value={sisterInfo.description} />
           </p>
           <a
             href={`mailto:${sisterInfo.email}`}
