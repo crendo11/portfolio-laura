@@ -64,7 +64,7 @@ const InfoModal = ({ onClose }: ModalProps) => {
             className="mb-4 max-h-[50vh]"
           />
           <h2 className="text-xl font-bold mb-2">{sisterInfo.name}</h2>
-          <p className="mb-4">
+          <p className="mb-4 text-gray-950">
             <PortableText value={sisterInfo.description} />
           </p>
           <a
