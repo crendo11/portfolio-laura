@@ -8,7 +8,7 @@ import DynamicBackground from '@/components/DynamicBackground'
 type Project = {
     _id: string
     title: string
-    slug: { current: string }
+    slug?: { current?: string } | null
     bgColor?: { hex: string }
     mainImage?: { asset: { url: string } }
 }
@@ -46,18 +46,29 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
                                                     : 'flex justify-end'
                                         }
                                     >
-                                        <Link
-                                            href={`/project/${project.slug.current}`}
-                                        >
-                                            <img
-                                                src={project.mainImage.asset.url}
-                                                alt={project.title}
-                                                className={`rounded-xl object-cover ${idx == 0 ? 'max-h-[80vh]' : 'max-h-[55vh] sm:max-h-[110vh]'} max-w-[75vw]`}
-                                                loading='lazy'
-                                                decoding='async'
-                                            />
-                                            <div className="py-2 text-xs sm:text-base text-gray-800">{project.title}</div>
-                                        </Link>
+                                            {project.slug?.current ? (
+                                                <Link href={`/project/${project.slug.current}`}>
+                                                    <img
+                                                        src={project.mainImage.asset.url}
+                                                        alt={project.title}
+                                                        className={`rounded-xl object-cover ${idx == 0 ? 'max-h-[80vh]' : 'max-h-[55vh] sm:max-h-[110vh]'} max-w-[75vw]`}
+                                                        loading='lazy'
+                                                        decoding='async'
+                                                    />
+                                                    <div className="py-2 text-xs sm:text-base text-gray-800">{project.title}</div>
+                                                </Link>
+                                            ) : (
+                                                <div>
+                                                    <img
+                                                        src={project.mainImage.asset.url}
+                                                        alt={project.title}
+                                                        className={`rounded-xl object-cover ${idx == 0 ? 'max-h-[80vh]' : 'max-h-[55vh] sm:max-h-[110vh]'} max-w-[75vw]`}
+                                                        loading='lazy'
+                                                        decoding='async'
+                                                    />
+                                                    <div className="py-2 text-xs sm:text-base text-gray-800">{project.title}</div>
+                                                </div>
+                                            )}
                                     </div>
                                 )}
                             </div>

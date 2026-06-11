@@ -4,7 +4,7 @@ import HomePageClient from '@/components/HomePageClient'
 type Project = {
   _id: string
   title: string
-  slug: { current: string }
+  slug?: { current?: string } | null
   bgColor?: { hex: string }
   mainImage?: { asset: { url: string } }
 }
