@@ -54,9 +54,9 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
                                     const imgWidth = asset.metadata?.dimensions?.width ?? 1920
                                     const imgHeight = asset.metadata?.dimensions?.height ?? 1080
                                     const maxHeightClass = idx === 0
-                                        ? 'max-h-[80vh]'
-                                        : 'max-h-[55vh] sm:max-h-[110vh]'
-                                    const imgClassName = `rounded-xl ${maxHeightClass} max-w-[75vw]`
+                                        ? 'max-h-[80svh]'
+                                        : 'max-h-[55svh] sm:max-h-[110svh]'
+                                    const imgClassName = `rounded-xl  max-w-[75vw]`
 
                                     const imageEl = hasDimensions ? (
                                         <Image
@@ -65,7 +65,7 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
                                             width={imgWidth}
                                             height={imgHeight}
                                             className={imgClassName}
-                                            style={{ width: 'auto', height: 'auto', maxWidth: '100%' }}
+                                            style={{ width: 'auto', maxWidth: '100%' }}
                                             sizes="75vw"
                                             placeholder={asset.metadata?.lqip ? 'blur' : 'empty'}
                                             blurDataURL={asset.metadata?.lqip}
