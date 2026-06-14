@@ -1,10 +1,31 @@
+import Image from 'next/image'
 import { sanityClient } from '@/lib/sanity'
 import { PortableText } from '@portabletext/react'
+import GalleryLightbox from '@/components/GalleryLightbox'
+import VideoFacade from '@/components/VideoFacade'
 
 type Project = {
     title: string
-    mainImage?: { asset: { url: string } }
-    gallery?: { asset: { url: string } }[]
+    mainImage?: {
+        asset: {
+            url: string
+            metadata: {
+                dimensions: {
+                    width: number
+                    height: number
+                }
+            }
+        }
+    }
+    gallery?: {
+      asset: {
+        url: string
+        metadata?: {
+          lqip?: string
+          dimensions?: { width: number; height: number }
+        }
+      }
+    }[]
     video?: string
     description?: any
     process?: any
@@ -63,8 +84,8 @@ export default async function ProjectPage({ params }: PageProps) {
   const project: Project = await sanityClient.fetch(
     `*[_type == "project" && slug.current == $slug][0]{
       title,
-      mainImage{ asset->{ url } },
-      gallery[]{ asset->{ url } },
+      mainImage{ asset->{ url, metadata{ dimensions } } },
+      gallery[]{ asset->{ url, metadata{ lqip, dimensions } } },
       video,
       description,
       process
@@ -74,14 +95,24 @@ export default async function ProjectPage({ params }: PageProps) {
 
   const videoInfo = buildEmbedSrc(project.video)
 
+  // Extract YouTube video ID from the embed src (e.g. .../embed/{ID}?...) so the
+  // VideoFacade can build the thumbnail URL without re-parsing the original raw URL.
+  const youtubeVideoId =
+    videoInfo.type === 'youtube' && videoInfo.src
+      ? (videoInfo.src.match(/\/embed\/([\w-]{11})/) ?? [])[1]
+      : undefined
+
   return (
     <main className="mx-auto w-full max-w-5xl lg:py-12 lg:px-6 py-4 px-0">
       {project.mainImage?.asset?.url && (
-        <img
+        <Image
           src={project.mainImage.asset.url}
-            alt={project.title}
-            className="w-full h-auto object-cover rounded mb-6"
-            loading="lazy"
+          alt={project.title}
+          width={project.mainImage.asset.metadata?.dimensions?.width ?? 1920}
+          height={project.mainImage.asset.metadata?.dimensions?.height ?? 1080}
+          className="w-full h-auto object-cover rounded mb-6"
+          sizes="(max-width: 1024px) 100vw, 1024px"
+          priority
         />
       )}
 
@@ -107,13 +138,10 @@ export default async function ProjectPage({ params }: PageProps) {
           )}
           {videoInfo.type !== 'file' && videoInfo.src && (
             <div className="relative w-full aspect-video rounded overflow-hidden bg-black">
-              <iframe
+              <VideoFacade
                 src={videoInfo.src}
-                loading="lazy"
-                className="absolute inset-0 h-full w-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                title="Project video"
+                type={videoInfo.type}
+                videoId={youtubeVideoId}
               />
             </div>
           )}
@@ -121,19 +149,16 @@ export default async function ProjectPage({ params }: PageProps) {
       )}
 
       {project.gallery && project.gallery.length > 0 && (
-        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-10 px-0 lg:px-0">
-          {project.gallery.map((img, idx) =>
-            img.asset?.url ? (
-              <img
-                key={idx}
-                src={img.asset.url}
-                alt={`Gallery image ${idx + 1}`}
-                className="w-full h-auto object-cover rounded"
-                loading="lazy"
-              />
-            ) : null
-          )}
-        </div>
+        <GalleryLightbox
+          images={project.gallery
+            .filter((img) => Boolean(img.asset?.url))
+            .map((img) => ({
+              url: img.asset.url,
+              lqip: img.asset.metadata?.lqip,
+              width: img.asset.metadata?.dimensions?.width,
+              height: img.asset.metadata?.dimensions?.height,
+            }))}
+        />
       )}
 
       {project.process && (

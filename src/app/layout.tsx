@@ -24,7 +24,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes"/>   
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className={`${josefinSans.className} antialiased`}>
+      <body className={`${josefinSans.className} antialiased`} suppressHydrationWarning>
         {children}
       </body>
     </html>

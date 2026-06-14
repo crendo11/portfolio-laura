@@ -42,7 +42,7 @@ export default function DynamicBackground({ projects, activeIndex }: DynamicBack
     <>
       {/* Layer A (for even-indexed sections) */}
       <div
-        className="fixed inset-0 -z-10 transition-opacity duration-[1500ms] ease-in-out w-full h-full"
+        className="fixed inset-0 -z-10 transition-opacity duration-[1500ms] motion-reduce:duration-0 ease-in-out w-full h-full"
         style={{
           background: gradientA,
           opacity: isLayerAVisible ? 1 : 0,
@@ -50,7 +50,7 @@ export default function DynamicBackground({ projects, activeIndex }: DynamicBack
       />
       {/* Layer B (for odd-indexed sections) */}
       <div
-        className="fixed inset-0 -z-10 transition-opacity duration-[1500ms] ease-in-out w-full h-full"
+        className="fixed inset-0 -z-10 transition-opacity duration-[1500ms] motion-reduce:duration-0 ease-in-out w-full h-full"
         style={{
           background: gradientB,
           opacity: isLayerAVisible ? 0 : 1,

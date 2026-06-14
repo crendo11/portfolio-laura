@@ -23,4 +23,18 @@ body {
   margin: 0;
 }
 
+/* Lightbox fade-in animation — opacity only so it composes cleanly with
+   the zoom transform applied via inline style on the same element. */
+@keyframes lightbox-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Disable animation for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  @keyframes lightbox-fadein {
+    from { opacity: 1; }
+    to   { opacity: 1; }
+  }
+}
 
