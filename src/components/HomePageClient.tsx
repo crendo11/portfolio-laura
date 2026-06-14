@@ -53,10 +53,13 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
                                     )
                                     const imgWidth = asset.metadata?.dimensions?.width ?? 1920
                                     const imgHeight = asset.metadata?.dimensions?.height ?? 1080
-                                    const maxHeightClass = idx === 0
-                                        ? 'max-h-[80svh]'
-                                        : 'max-h-[55svh] sm:max-h-[110svh]'
-                                    const imgClassName = `rounded-xl  max-w-[75vw]`
+                                    
+                                    // detect if the image is portrait or landscape
+                                    const isPortrait = imgHeight > imgWidth
+                                    
+                                    const imgClassName = isPortrait
+                                        ? `rounded-xl max-w-[90vw] h-[clamp(40rem,55vw,70rem)]`
+                                        : `rounded-xl max-w-[90vw] h-[clamp(14rem,50vw,40rem)]`
 
                                     const imageEl = hasDimensions ? (
                                         <Image
@@ -65,7 +68,7 @@ export default function HomePageClient({ projects }: HomePageClientProps) {
                                             width={imgWidth}
                                             height={imgHeight}
                                             className={imgClassName}
-                                            style={{ width: 'auto', maxWidth: '100%' }}
+                                            style={{ width: 'auto' }}
                                             sizes="75vw"
                                             placeholder={asset.metadata?.lqip ? 'blur' : 'empty'}
                                             blurDataURL={asset.metadata?.lqip}
